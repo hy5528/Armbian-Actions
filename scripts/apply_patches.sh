@@ -10,9 +10,47 @@ else
   rsync -a --quiet --exclude='install-pve' "${GITHUB_WORKSPACE}/patch/sbin/" packages/bsp/common/usr/sbin/
 fi
 
-# Flippy BRANCH
+# Add Flippy BRANCH
 if [[ "${BRANCH}" =~ ^(flippy)$ ]]; then
-  cp -rf ${GITHUB_WORKSPACE}/patch/test/flippy/families/* config/sources/families/
+  sed -i '/case \$BRANCH in/a \
+	flippy)\n\
+		BOOTSCRIPT='"'"'boot-rk35xx.cmd:boot.cmd'"'"'\n\
+		BOOTDIR='"'"'u-boot-rockchip64'"'"'\n\
+		declare -g KERNEL_MAJOR_MINOR="6.1"    # Major and minor versions of this kernel.\n\
+		declare -g -i KERNEL_GIT_CACHE_TTL=120 # 2 minutes; this is a high-traffic repo\n\
+		KERNELSOURCE='"'"'https://github.com/unifreq/linux-6.1.y-rockchip.git'"'"'\n\
+		KERNELBRANCH='"'"'branch:main'"'"'\n\
+		KERNELPATCHDIR='"'"'rk35xx-vendor-6.1'"'"'\n\
+		;;' config/sources/families/rk35xx.conf
+
+  sed -i '/case \$BRANCH in/a \
+	flippy)\n\
+		BOOTSCRIPT='"'"'boot-rk35xx.cmd:boot.cmd'"'"'\n\
+		BOOTDIR='"'"'u-boot-rockchip64'"'"'\n\
+		declare -g KERNEL_MAJOR_MINOR="6.1"    # Major and minor versions of this kernel.\n\
+		declare -g -i KERNEL_GIT_CACHE_TTL=120 # 2 minutes; this is a high-traffic repo\n\
+		KERNELSOURCE='"'"'https://github.com/unifreq/linux-6.1.y-rockchip.git'"'"'\n\
+		KERNELBRANCH='"'"'branch:main'"'"'\n\
+		KERNELPATCHDIR='"'"'rk35xx-vendor-6.1'"'"'\n\
+		LINUXFAMILY=rk35xx\n\
+		;;' config/sources/families/rockchip-rk3588.conf
+
+
+  sed -i '/case \$BRANCH in/a \
+	flippy)\n\
+		declare -g KERNEL_MAJOR_MINOR="6.12"    # Major and minor versions of this kernel.\n\
+		declare -g -i KERNEL_GIT_CACHE_TTL=120 # 2 minutes; this is a high-traffic repo\n\
+		KERNELSOURCE='"'"'https://github.com/unifreq/linux-6.12.y.git'"'"'\n\
+		KERNELBRANCH='"'"'branch:main'"'"'\n\
+		;;' config/sources/families/include/meson64_common.inc
+
+  sed -i '/case \$BRANCH in/a \
+	flippy)\n\
+		declare -g KERNEL_MAJOR_MINOR="6.12"    # Major and minor versions of this kernel.\n\
+		declare -g -i KERNEL_GIT_CACHE_TTL=120 # 2 minutes; this is a high-traffic repo\n\
+		KERNELSOURCE='"'"'https://github.com/unifreq/linux-6.12.y.git'"'"'\n\
+		KERNELBRANCH='"'"'branch:main'"'"'\n\
+		;;' config/sources/families/include/rockchip64_common.inc
   cp -f ${GITHUB_WORKSPACE}/patch/test/flippy/config/* config/kernel/
 fi
 
