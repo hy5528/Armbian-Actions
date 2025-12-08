@@ -35,7 +35,6 @@ if [[ "${BRANCH}" =~ ^(flippy)$ ]]; then
 		LINUXFAMILY=rk35xx\n\
 		;;' config/sources/families/rockchip-rk3588.conf
 
-
   sed -i '/case \$BRANCH in/a \
 	flippy)\n\
 		declare -g KERNEL_MAJOR_MINOR="6.12"    # Major and minor versions of this kernel.\n\
