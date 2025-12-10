@@ -143,7 +143,17 @@ jobs:
           df -hT ${PWD}
           git clone -q --single-branch --depth=1 --branch=main https://github.com/armbian/build.git build
           ln -sf /mnt/workdir/build ${GITHUB_WORKSPACE}/build
-
+      - name: "Checkout current repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          clean: false
+          path: current
+          
+      - name: "Copy userpatches to build folder"
+        shell: bash
+        run: |   
+          rsync -av current/patch/. /mnt/workdir/build/
       - name: Apply patches
         if: ${{ inputs.APPLY_PATCHES == 'yes' }}
         working-directory: /mnt/workdir/build
